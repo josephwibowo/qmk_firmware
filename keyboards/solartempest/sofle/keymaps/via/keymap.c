@@ -16,7 +16,17 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+// typedef union {
+//   uint32_t raw;
+//   struct {
+//     bool     rgb_layer_change :1;
+//   };
+// } user_config_t;
+
+// user_config_t user_config;
+
 #include QMK_KEYBOARD_H
+#include "quantum.h" 
 
 #ifdef ENCODER_ENABLE
 	#include "encoder.c"
@@ -26,9 +36,9 @@
 	//#include "oled.c" //Stock OLED code
 	//Note that the keyboard animations below take a large amount of space!
 		//#include "bongocat.c" //OLED code for Bongocat, original code by foureight84.
-		//#include "luna.c" //OLED code for Luna, original code by Hellsingcoder and adapted by Jackasaur.
+		#include "luna.c" //OLED code for Luna, original code by Hellsingcoder and adapted by Jackasaur.
 		//#include "snakey.c" //OLED code for Snakey, customized from Luna. If not used, do not use OLED_LOGO in config.h.
-		#include "snakey_minimal.c" //OLED code for Snakey, without WPM/related animations to save space. If not used, do not use OLED_LOGO in config.h.
+		// #include "snakey_minimal.c" //OLED code for Snakey, without WPM/related animations to save space. If not used, do not use OLED_LOGO in config.h.
 #endif
 
 #ifdef POINTING_DEVICE_ENABLE
@@ -86,56 +96,43 @@ static uint16_t held_shift = 0;
 #endif
 
 
+
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {  //Can skip these hard-coded layouts to save space when using only VIA (+700).
 /* QWERTY
  * ,-----------------------------------------.                    ,-----------------------------------------.
- * |  `   |   1  |   2  |   3  |   4  |   5  |                    |   6  |   7  |   8  |   9  |   0  |  `   |
+ * |  `   |   1  |   2  |   3  |   4  |   5  |                    |   6  |   7  |   8  |   9  |   0  |  -   |
  * |------+------+------+------+------+------|                    |------+------+------+------+------+------|
- * | ESC  |   Q  |   W  |   E  |   R  |   T  |-------.            |   Y  |   U  |   I  |   O  |   P  | Bspc |
+ * | Tab  |   Q  |   W  |   E  |   R  |   T  |-------.            |   Y  |   U  |   I  |   O  |   P  | Bspc |
  * |------+------+------+------+------+------| Trkbl |            |------+------+------+------+------+------|
- * | Tab  |   A  |   S  |   D  |   F  |   G  |-------.    ,-------|   H  |   J  |   K  |   L  |   ;  |  '   |
+ * | Caps |   A  |   S  |   D  |   F  |   G  |-------.    ,-------|   H  |   J  |   K  |   L  |   ;  |  '   |
  * |------+------+------+------+------+------|  Enc  |    |  Enc  |------+------+------+------+------+------|
  * |LShift|   Z  |   X  |   C  |   V  |   B  |-------|    |-------|   N  |   M  |   ,  |   .  |   /  |RShift|
  * `-----------------------------------------/       /     \      \-----------------------------------------'
- *            | LGUI | LAlt | LCTR |LOWER | /Enter  /       \Space \  |RAISE | RCTR | RAlt | RGUI |
+ *            | LCTR | LGUI | LAlt |RAISE | /Enter  /       \Space \  |RAISE | RCTR | RAlt | RGUI |
  *            |      |      |      |      |/       /         \      \ |      |      |      |      |
  *            `----------------------------------'           '------''---------------------------'
 */
-/*[0] = LAYOUT(
+[0] = LAYOUT(
   KC_GRV,	KC_1,	KC_2,	KC_3,	KC_4,	KC_5,						KC_6,	KC_7,	KC_8,	KC_9,	KC_0,		KC_MINS,
-  KC_ESC,	KC_Q,	KC_W,	KC_E,	KC_R,	KC_T,	KC__VOLUP,	KC_PGUP,KC_Y,	KC_U,	KC_I,	KC_O,	KC_P,		SBS,
-  KC_TAB,	KC_A,	KC_S,	KC_D,	KC_F,	KC_G,	KC_MUTE,	KC_NO,	KC_H,	KC_J,	KC_K,	KC_L,	KC_SCLN,	KC_QUOT,
+  KC_TAB,	KC_Q,	KC_W,	KC_E,	KC_R,	KC_T,	KC__VOLUP,	KC_PGUP,KC_Y,	KC_U,	KC_I,	KC_O,	KC_P,		SBS,
+  KC_CAPS,	KC_A,	KC_S,	KC_D,	KC_F,	KC_G,	KC_MUTE,	KC_NO,	KC_H,	KC_J,	KC_K,	KC_L,	KC_SCLN,	KC_QUOT,
   KC_LSFT,	KC_Z,	KC_X,	KC_C,	KC_V,	KC_B,	KC__VOLDOWN,KC_PGDN,KC_N,	KC_M,	KC_COMM,KC_DOT,	KC_SLSH,	KC_RSFT,
-					KC_LGUI,KC_LALT,KC_LCTRL,MO(2),	KC_ENT,		KC_SPC,	MO(3),	KC_RCTRL,KC_RALT,KC_RGUI
+					KC_LCTRL, KC_LGUI, KC_LALT, MO(1),	KC_ENT,		KC_SPC,	MO(2),	KC_RGUI,KC_RCTRL,KC_RALT
 ),
 [1] = LAYOUT(
-  KC_PSCR,	KC_5,		KC_TRNS,	KC_TRNS,	KC_TRNS,	KC_TRNS,							KC_TRNS,	KC_TRNS,	KC_TRNS,	KC_TRNS,	KC_F11,		KC_F4,
-  KC_T,		KC_ESC,		KC_Q,		KC_W,		KC_E,		KC_R,		KC_TRNS,	KC_TRNS,	KC_TRNS,	KC_TRNS,	KC_TRNS,	KC_TRNS,	KC_TRNS,	KC_F12,
-  KC_G,		KC_TAB,		KC_A,		KC_S,		KC_D,		KC_F,		KC_TRNS,	KC_TRNS,	KC_TRNS,	KC_TRNS,	KC_TRNS,	KC_TRNS,	KC_TRNS,	KC_TRNS,
-  KC_LSFT,	KC_LSFT,	KC_Z,		KC_X,		KC_C,		KC_V,		KC_TRNS,	KC_TRNS,	KC_TRNS,	KC_TRNS,	KC_TRNS,	KC_TRNS,	KC_TRNS,	KC_RALT,
-						KC_ENT,		KC_B,		KC_TRNS,	KC_PAUS,	KC_SPACE,	KC_TRNS,	KC_TRNS,	KC_TRNS,	KC_TRNS,	KC_TRNS
+  KC_PSCR,	KC_5,		KC_TRNS,	KC_TRNS,	KC_TRNS,	KC_TRNS,							KC_TRNS,	KC_TRNS,	KC_TRNS,	KC_TRNS,	KC_EQL,		KC_F4,
+  KC_ESC,		KC_ESC,		KC_Q,		KC_W,		KC_E,		KC_R,		KC_TRNS,	KC_SLCK,	KC_TRNS,	KC_TRNS,	KC_UP,	KC_TRNS,	KC_LBRC,	KC_RBRC,
+  KC_G,		KC_TAB,		KC_A,		KC_S,		KC_D,		KC_F,		KC_TRNS,	KC_TRNS,	KC_TRNS,	KC_LEFT,	KC_DOWN,	KC_RGHT,	KC_TRNS,	KC_TRNS,
+  KC_LSFT,	KC_LSFT,	KC_Z,		KC_X,		KC_C,		KC_V,		KC_TRNS,	KC_PAUS,	KC_TRNS,	KC_TRNS,	KC_TRNS,	KC_TRNS,	KC_TRNS,	KC_RALT,
+						KC_LCTRL, KC_LGUI, KC_LALT, KC_TRNS,	KC_ENT,		KC_SPC,	KC_TRNS,	KC_RCTRL,KC_RALT,KC_RGUI
 ),
 [2] = LAYOUT(
   KC_TRNS,	KC_F1,	KC_F2,	KC_F3,	KC_F4,	KC_F5,							KC_F6,	KC_F7,	KC_F8,	KC_F9,	KC_F10,		KC_F11,
-  KC_GRV,	KC_1,	KC_2,	KC_3,	KC_4,	KC_5,	KC_RGHT,		KC_TRNS,KC_6,	KC_7,	KC_8,	KC_9,	KC_0,		KC_F12,
-  KC_WREF,	KC_EXLM,KC_AT,	KC_HASH,KC_DLR,	KC_PERC,KC_TRNS,		KC_TRNS,KC_CIRC,KC_AMPR,KC_ASTR,KC_LPRN,KC_RPRN,	KC_PIPE,
-  KC_TRNS,	KC_EQL,	KC_MINS,KC_PLUS,KC_LCBR,KC_LCBR,KC_LEFT,		KC_TRNS,KC_LBRC,KC_RBRC,KC_DOT,	KC_COLN,KC_BSLS,	KC_TRNS,
+  KC_GRV,	KC_1,	KC_2,	KC_3,	KC_4,	KC_5,	RGB_VAI,		KC_TRNS,KC_6,	KC_7,	KC_8,	KC_9,	KC_0,		KC_F12,
+  KC_WREF,	KC_EXLM,KC_AT,	KC_HASH,KC_DLR,	KC_PERC,RGB_TOG,		KC_TRNS,KC_CIRC,KC_AMPR,KC_ASTR,KC_LPRN,KC_RPRN,	KC_PIPE,
+  KC_TRNS,	KC_EQL,	KC_MINS,KC_PLUS,KC_LCBR,KC_LCBR,RGB_VAD,		KC_TRNS,KC_LBRC,KC_RBRC,KC_DOT,	KC_COLN,KC_BSLS,	KC_TRNS,
 					KC_TRNS,KC_TRNS,KC_TRNS,KC_TRNS,KC_TRNS,		KC_TRNS,KC_TRNS,KC_TRNS,KC_TRNS,KC_TRNS
-),
-[3] = LAYOUT(
-  NML,		KC_TRNS,	KC_TRNS,	KC_TRNS,	KC_TRNS,	KC_TRNS,							KC_TRNS,	KC_TRNS,	KC_TRNS,	KC_TRNS,	KC_TRNS,	NMR,
-  KC_NLCK,	KC_TRNS,	KC_TRNS,	KC_TRNS,	KC_TRNS,	KC_TRNS,	ATABF,		NMR,		KC_WFWD,	KC_HOME,	KC_UP,		KC_END,		KC_INS,		KC_DEL,
-  KC_SLCK,	KC_TRNS,	KC_TRNS,	KC_TRNS,	KC_TRNS,	KC_TRNS,	KC_TRNS,	KC_TRNS,	KC_WBAK,	KC_LEFT,	KC_DOWN,	KC_RIGHT,	KC_TRNS,	KC_TRNS,
-  KC_TRNS,	KC_TRNS,	KC_TRNS,	KC_TRNS,	KC_TRNS,	KC_TRNS,	ATABR,		NML,		KC_CAPS,	KC_PGUP,	KC_TRNS,	KC_PGDN,	KC_TRNS,	KC_TRNS,
-						KC_TRNS,	KC_TRNS,	KC_TRNS,	KC_TRNS,	KC_TRNS,	KC_TRNS,	KC_TRNS,	KC_TRNS,	KC_TRNS,	KC_TRNS
-),
-[4] = LAYOUT(
-  KC_TRNS,		KC_TRNS,	KC_TRNS,	KC_TRNS,	KC_TRNS,	KC_TRNS,							KC_TRNS,	KC_TRNS,	KC_TRNS,	KC_TRNS,	KC_TRNS,	KC_TRNS,
-  KC_NLCK,	KC_TRNS,	KC_TRNS,	KC_TRNS,	KC_TRNS,	KC_TRNS,	KC_TRNS,		KC_TRNS,		KC_TRNS,	KC_TRNS,	KC_TRNS,		KC_TRNS,		KC_TRNS,		KC_TRNS,
-  KC_SLCK,	KC_TRNS,	KC_TRNS,	KC_TRNS,	KC_TRNS,	KC_TRNS,	KC_TRNS,	KC_TRNS,	KC_TRNS,	KC_TRNS,	KC_TRNS,	KC_TRNS,	KC_TRNS,	KC_TRNS,
-  KC_TRNS,	KC_TRNS,	KC_TRNS,	KC_TRNS,	KC_TRNS,	KC_TRNS,	KC_TRNS,		KC_TRNS,		KC_TRNS,	KC_TRNS,	KC_TRNS,	KC_TRNS,	KC_TRNS,	KC_TRNS,
-						KC_TRNS,	KC_TRNS,	KC_TRNS,	KC_TRNS,	KC_TRNS,	KC_TRNS,	KC_TRNS,	KC_TRNS,	KC_TRNS,	KC_TRNS
-)*/
+)
 };
 
 
@@ -216,9 +213,9 @@ void matrix_scan_user(void) {
 	#ifdef ENCODER_ENABLE
 		encoder_action_unregister();
 	#endif
-	if (timer_elapsed32(oled_timer) > 60000) { //60000ms = 60s
-		pimoroni_trackball_set_rgbw(0,0,0, 0x00); //Turn off Pimoroni trackball LED when computer is idle for 1 minute. Would use suspend_power_down_user but the code is not working.
-	}
+	// if (timer_elapsed32(oled_timer) > 60000) { //60000ms = 60s
+	// 	pimoroni_trackball_set_rgbw(0,0,0, 0x00); //Turn off Pimoroni trackball LED when computer is idle for 1 minute. Would use suspend_power_down_user but the code is not working.
+	// }
 }
 
 
@@ -436,93 +433,197 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 }
 
 
+
+
+// #ifdef RGB_MATRIX_ENABLE
+// led_config_t g_led_config = {
+//     {
+//         {  11,  12,  21,  22,  31,  32 },
+//         {  10,  13,  20,  23,  30,  33 },
+//         {  9,   14,  19,  24,  29,  34},
+//         {  8,   15,  18,  25,  28,  35},
+//         {  7,   16,  17,  26,  27,  NO_LED },
+//         {  47,  48,  57,  58,  67,  68},
+//         {  46,  49,  56,  59,  66,  69},
+//         {  45,  50,  55,  60,  65,  70},
+//         {  44,  51,  54,  61,  64,  71},
+//         {  43,  52,  53,  62,  63,  NO_LED }
+//     },
+//     {
+//        // Left side underglow
+//         {96, 40}, {16, 20}, {48, 10}, {80, 18}, {88, 60}, {56, 57}, {24,60},
+//         // Left side Matrix
+//         {32, 57}, { 0, 48}, { 0, 36}, { 0, 24}, { 0, 12},
+//         {16, 12}, {16, 24}, {16, 36}, {16, 48}, {48, 55},
+//         {64, 57}, {32, 45}, {32, 33}, {32, 21}, {32,  9},
+//         {48,  7}, {48, 19}, {48, 31}, {48, 43}, {80, 59},
+//         {96, 64}, {64, 45}, {64, 33}, {64, 21}, {64,  9},
+//         {80, 10}, {80, 22}, {80, 34}, {80, 47},
+
+
+//         // Right side underglow
+//         {128, 40}, {208, 20}, {176, 10}, {144, 18}, {136, 60}, {168, 57}, {200,60},
+//         // Right side Matrix
+//         {192, 57}, {224, 48}, {224, 36}, {224, 24}, {224, 12},
+//         {208, 12}, {208, 24}, {208, 36}, {208, 48}, {176, 55},
+//         {160, 57}, {192, 45}, {192, 33}, {192, 21}, {192,  9},
+//         {176,  7}, {176, 19}, {176, 31}, {176, 43}, {144, 59},
+//         {128, 64}, {160, 45}, {160, 33}, {160, 21}, {160,  9},
+//         {144, 10}, {144, 22}, {144, 34}, {144, 47},
+//     },
+//     {
+//         LED_FLAG_NONE, LED_FLAG_UNDERGLOW, LED_FLAG_UNDERGLOW, LED_FLAG_UNDERGLOW, LED_FLAG_UNDERGLOW, LED_FLAG_UNDERGLOW, LED_FLAG_UNDERGLOW,
+//         LED_FLAG_KEYLIGHT, LED_FLAG_KEYLIGHT, LED_FLAG_KEYLIGHT, LED_FLAG_KEYLIGHT, LED_FLAG_KEYLIGHT,
+//         LED_FLAG_KEYLIGHT, LED_FLAG_KEYLIGHT, LED_FLAG_KEYLIGHT, LED_FLAG_KEYLIGHT, LED_FLAG_KEYLIGHT,
+//         LED_FLAG_KEYLIGHT, LED_FLAG_KEYLIGHT, LED_FLAG_KEYLIGHT, LED_FLAG_KEYLIGHT, LED_FLAG_KEYLIGHT,
+//         LED_FLAG_KEYLIGHT, LED_FLAG_KEYLIGHT, LED_FLAG_KEYLIGHT, LED_FLAG_KEYLIGHT, LED_FLAG_KEYLIGHT,
+//         LED_FLAG_KEYLIGHT, LED_FLAG_KEYLIGHT, LED_FLAG_KEYLIGHT, LED_FLAG_KEYLIGHT, LED_FLAG_KEYLIGHT,
+//         LED_FLAG_KEYLIGHT, LED_FLAG_KEYLIGHT, LED_FLAG_KEYLIGHT, LED_FLAG_KEYLIGHT,
+//         LED_FLAG_NONE, LED_FLAG_UNDERGLOW, LED_FLAG_UNDERGLOW, LED_FLAG_UNDERGLOW, LED_FLAG_UNDERGLOW, LED_FLAG_UNDERGLOW, LED_FLAG_UNDERGLOW,
+//         LED_FLAG_KEYLIGHT, LED_FLAG_KEYLIGHT, LED_FLAG_KEYLIGHT, LED_FLAG_KEYLIGHT, LED_FLAG_KEYLIGHT,
+//         LED_FLAG_KEYLIGHT, LED_FLAG_KEYLIGHT, LED_FLAG_KEYLIGHT, LED_FLAG_KEYLIGHT, LED_FLAG_KEYLIGHT,
+//         LED_FLAG_KEYLIGHT, LED_FLAG_KEYLIGHT, LED_FLAG_KEYLIGHT, LED_FLAG_KEYLIGHT, LED_FLAG_KEYLIGHT,
+//         LED_FLAG_KEYLIGHT, LED_FLAG_KEYLIGHT, LED_FLAG_KEYLIGHT, LED_FLAG_KEYLIGHT, LED_FLAG_KEYLIGHT,
+//         LED_FLAG_KEYLIGHT, LED_FLAG_KEYLIGHT, LED_FLAG_KEYLIGHT, LED_FLAG_KEYLIGHT, LED_FLAG_KEYLIGHT,
+//         LED_FLAG_KEYLIGHT, LED_FLAG_KEYLIGHT, LED_FLAG_KEYLIGHT, LED_FLAG_KEYLIGHT
+//     }
+// };
+		
+// #endif
+
+// #ifdef RGB_MATRIX_ENABLE	
+// 	rgb_matrix_set_color_all(224, 224, 224);
+// 	rgb_matrix_set_color(2, 0, 0, 255);
+// #endif
+
 #ifdef RGBLIGHT_ENABLE
-	layer_state_t layer_state_set_user(layer_state_t state)	//Use for layer lighting. This method uses less space than RGBLIGHT_LAYER_SEGMENTS.
-	{
-		switch (get_highest_layer(state)) { // Change all other LEDs based on layer state as well
-			case 0:
-				//rgblight_sethsv_noeeprom(50,255,80);	//green-blue gradient
-				rgblight_sethsv_noeeprom(115,170,80);	//pale blue gradient
-				#ifdef POINTING_DEVICE_ENABLE
-					if (was_scrolling==true){ //Check if was scrolling when layer was left
-						trackball_is_scrolling=true;
-						run_trackball_cleanup();
-					} else{
-						trackball_is_scrolling=false;
-						run_trackball_cleanup();
-					}
-				#endif
-				break;
-			case 1:
-				rgblight_sethsv_noeeprom(252,255,80);
-				#ifdef HAPTIC_ENABLE	//Set different patterns for haptic feedback layer indication
-					DRV_pulse(69);		//transition_hum_10
-				#endif
-				break;
-			case 2:
-				rgblight_sethsv_noeeprom(80,255,80);
-				#ifdef HAPTIC_ENABLE
-					DRV_pulse(37);		//lg_dblclick_str
-				#endif
-				break;
-			case 3:
-				//rgblight_sethsv_noeeprom(118,255,80);	//blue-purple gradient
-				rgblight_sethsv_noeeprom(160,255,80);	//blue-magenta gradient
-				#ifdef HAPTIC_ENABLE
-					DRV_pulse(31);		//sh_dblclick_med
-				#endif
-				break;
-			case 4:
-				rgblight_sethsv_noeeprom(218,255,80);
-				#ifdef HAPTIC_ENABLE
-					DRV_pulse(7);		//soft_bump
-				#endif
-				#ifdef POINTING_DEVICE_ENABLE	//Set trackball mouse mode when layer 4 is activated
-					if (was_scrolling==true){	//Check if in scrolling mode when layer was activated
-						trackball_is_scrolling=false;
-						run_trackball_cleanup();
-					}
-				#endif
-		  }
-		return state;
-	}
 	
-	bool led_update_user(led_t led_state)	//Lock key status indicators
+	enum layer_number {
+    _QWERTY = 0,
+    _RAISE,
+    _ADJUST
+	};
+
+
+	const rgblight_segment_t PROGMEM default_layer[] = RGBLIGHT_LAYER_SEGMENTS(
+	    {0, RGBLED_NUM, 27, 218, 218}
+	);
+	const rgblight_segment_t PROGMEM raise_layer[] = RGBLIGHT_LAYER_SEGMENTS(
+	    {0, RGBLED_NUM, 35, 230, 200},
+	    {47, 1, HSV_RED}, 
+	    {53, 1, HSV_RED},
+	    {54, 1, HSV_RED},
+	    {59, 1, HSV_RED}
+	);
+	const rgblight_segment_t PROGMEM adjust_layer[] = RGBLIGHT_LAYER_SEGMENTS(
+	    {0, RGBLED_NUM, HSV_GREEN}
+	);
+	const rgblight_segment_t PROGMEM numlock_layer[] = RGBLIGHT_LAYER_SEGMENTS(
+	    {0, RGBLED_NUM, HSV_PURPLE}
+	);
+	const rgblight_segment_t PROGMEM capslock_layer[] = RGBLIGHT_LAYER_SEGMENTS(
+	    {2, 1, HSV_RED}
+	    // {10, 1, HSV_RED}
+	    // {10, 1, HSV_RED}
+
+	);
+
+	const rgblight_segment_t* const PROGMEM my_rgb_layers[] = RGBLIGHT_LAYERS_LIST(
+	    default_layer,    
+	    raise_layer,   
+	    adjust_layer, 
+	    numlock_layer,  
+	    capslock_layer
+	);
+
+
+	// bool led_update_user(led_t led_state)	//Lock key status indicators
+	// {
+	// 		rgblight_set_layer_state(3, led_state.num_lock);
+	// 		rgblight_set_layer_state(4, led_state.caps_lock);
+	// 		return true;
+	// }
+
+	bool led_update_user(led_t led_state) { 
+    if (led_state.caps_lock & layer_state_is(_QWERTY)) {
+    	rgblight_sethsv(5, 230, rgblight_get_val());
+      rgblight_mode(RGBLIGHT_MODE_BREATHING+3);      
+    } else {
+	    	if (layer_state_is(_ADJUST)) {
+	    		rgblight_mode(RGBLIGHT_MODE_RAINBOW_SWIRL+1);
+	    	}
+	    	else {
+	    		rgblight_sethsv(25, 200, rgblight_get_val());
+	    		rgblight_mode(1);
+	    	}
+    }
+    // else if (led_state.num_lock & layer_state_is(1)) {
+    //   rgblight_mode(RGBLIGHT_MODE_BREATHING);      
+    // }
+    // else {
+    //   rgblight_mode(1);
+    // }
+    return true;
+  }
+
+
+	void keyboard_post_init_user(void)
 	{
-		if(led_state.caps_lock){
-			rgblight_sethsv_range(43,100,170, 4,7); //White-left caps lock indication
-		}
-		if(!(led_state.num_lock)){
-			rgblight_sethsv_range(43,100,170, 28,31); //White-right num lock indication. Since this indicator is inverted, it must be on the master side of the keyboard to shut off properly when the computer is sleeping.
-		}
-		if(led_state.scroll_lock){
-			rgblight_sethsv_range(43,100,170, 16,19); //White-middle scroll lock indication
-		}
-		return true;
+		  // rgblight_layers = my_rgb_layers;
+		  layer_move(0);
 	}
+
+
+	// layer_state_t default_layer_state_set_user(layer_state_t state) {
+	// 		rgblight_set_layer_state(0, layer_state_cmp(state, 0));
+	// 		return state;
+	// }
+
+
+	layer_state_t layer_state_set_user(layer_state_t state)	{
+			// rgblight_set_layer_state(2, layer_state_cmp(state, _ADJUST));
+		  uint8_t layer = biton32(state);
+		  // led_t led_state = host_keyboard_led_state();
+		  switch (layer) {
+		  		case _ADJUST:
+		  			rgblight_mode(RGBLIGHT_MODE_RAINBOW_SWIRL+1);
+		  			break;
+					case _RAISE:
+						rgblight_sethsv(35, 230, rgblight_get_val());
+						rgblight_mode(1);
+						break;
+						// rgblight_set_layer_state(1, layer_state_cmp(state, _RAISE));
+
+					case _QWERTY:
+						rgblight_sethsv(25, 200, rgblight_get_val());
+						rgblight_mode(1);
+						
+						// if (led_state.caps_lock) {
+		    //     	rgblight_mode(RGBLIGHT_MODE_BREATHING+2);
+		    //   	}
+						break;
+						// rgblight_set_layer_state(0, layer_state_cmp(state, _QWERTY));
+		  }
+			// if (layer == _ADJUST) {
+			// 	 rgblight_sethsv(130, 255, 255);
+			// 		// rgblight_sethsv_noeeprom(115,170,80);
+			// 		// rgblight_mode_noeeprom(RGBLIGHT_MODE_STATIC_GRADIENT+8);
+					
+			// } else {
+			// 		rgblight_mode(RGBLIGHT_MODE_STATIC_LIGHT);
+			// 		rgblight_set_layer_state(1, layer_state_cmp(state, _RAISE));
+			// }
+			// if (get_highest_layer(layer_state) == _ADJUST) {
+			// 		rgblight_set_layer_state(2, layer_state_cmp(state, _ADJUST));
+			// 		// rgblight_mode_noeeprom(RGBLIGHT_MODE_STATIC_GRADIENT+1);
+			// } else {
+			// 		rgblight_set_layer_state(1, layer_state_cmp(state, _RAISE));
+			// }
+		  return state;
+		
+	}
+
 #endif
 
 
-void keyboard_post_init_user(void)
-{
-	#ifdef RGBLIGHT_ENABLE
-		rgblight_mode_noeeprom(RGBLIGHT_MODE_STATIC_GRADIENT+8); //Set to static gradient 9
-	#endif
-	layer_move(0); 						//Start on layer0 by default to set LED colours. Can remove to save a very small amount of space.
-	#ifdef POINTING_DEVICE_ENABLE
-		pimoroni_trackball_set_precision(1.75);	//Start trackball with lower precision mode
-		run_trackball_cleanup();
-	#endif
-}
 
-#ifdef POINTING_DEVICE_ENABLE
-	void suspend_power_down_user(void) {	//Code does not work, need to confirm why
-			pimoroni_trackball_set_rgbw(0,0,0, 0x00); //Turn off Pimoroni trackball LED when computer is sleeping
-	}
-#endif
-
-#ifdef POINTING_DEVICE_ENABLE
-	void suspend_wakeup_init_user(void) { //turn on Pimoroni LED when awoken
-		run_trackball_cleanup();
-	}
-#endif

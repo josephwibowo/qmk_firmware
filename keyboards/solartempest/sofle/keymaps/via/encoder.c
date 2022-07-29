@@ -35,7 +35,16 @@
 	void encoder_action_register(uint8_t index, bool clockwise) {
 		keyevent_t encoder_event = (keyevent_t){.key = clockwise ? encoder_cw[index] : encoder_ccw[index], .pressed = true, .time = (timer_read() | 1)};
 		encoder_state[index] = (clockwise ^ 1) | (clockwise << 1);
-		action_exec(encoder_event);
+
+		if (get_highest_layer(layer_state) == 2) {
+			if (clockwise) {
+			    rgblight_increase_val();
+			} else {
+			    rgblight_decrease_val();
+			}
+		} else {
+			action_exec(encoder_event);
+		}
 	}
 
 	bool encoder_update_user(uint8_t index, bool clockwise) {

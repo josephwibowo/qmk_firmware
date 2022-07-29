@@ -41,6 +41,7 @@
 #define MATRIX_COL_PINS_RIGHT { F6, F7, B1, B3, B2, B6, NO_PIN } //NO_PIN is used for the encoder key matrix in via.
 #define DIODE_DIRECTION COL2ROW
 #define DEBOUNCE 6 //Default is 5
+#define DYNAMIC_KEYMAP_LAYER_COUNT 5
 
 // NKRO Settings
 #ifdef NKRO_ENABLE
@@ -58,7 +59,7 @@
 	#define COMBO_TERM 400 //Default combo time is 200ms. This is the time delay allowed between deleting each whole word with shift-backspace.
 #endif
 
-#define D2SKATE_MACRO_ENABLE	//Enable Destiny 2 hunter skate macro (+224)
+// #define D2SKATE_MACRO_ENABLE	//Enable Destiny 2 hunter skate macro (+224)
 
 // Disabled to save space
 #define NO_ACTION_MACRO
@@ -88,7 +89,7 @@
 	#ifdef WPM_ENABLE
 		#define SPLIT_WPM_ENABLE			//Enable WPM across split keyboards (+106-268).
 	#endif
-	#define OLED_LOGO					//Enable to print snakey custom logo on slave side (+108).
+	//#define OLED_LOGO					//Enable to print snakey custom logo on slave side (+108).
 	//#define SNEAK_DISABLE				//Disable snakey keyboard pet sneak animation to save space (-132).
 	//#define OLED_NO_SLAVE				//Disable snakey minimal keyboard pet slave OLED rendering (-160).
 	//#define OLED_NO_MASTER				//Disable snakey minimal keyboard pet master OLED rendering and render status on the slave (+96).
@@ -129,15 +130,39 @@
 #endif               
 
 // RGB settings
+#define RGB_DI_PIN D3
+#ifdef RGB_MATRIX_ENABLE
+	#define RGBLED_NUM 72
+	#define DRIVER_LED_TOTAL RGBLED_NUM
+	#define RGB_MATRIX_MAXIMUM_BRIGHTNESS 120 // limits maximum brightness of LEDs to 150 out of 255. Higher may cause the controller to crash.
+	#define RGB_MATRIX_HUE_STEP 8
+	#define RGB_MATRIX_SAT_STEP 8
+	#define RGB_MATRIX_VAL_STEP 8
+	#define RGB_MATRIX_SPD_STEP 10
+	#define RGB_MATRIX_KEYPRESSES
+	#define RGB_MATRIX_FRAMEBUFFER_EFFECTS
+	#define RGB_MATRIX_SPLIT {36,36}
+	#define SPLIT_TRANSPORT_MIRROR
+#endif
+
 #ifdef RGBLIGHT_ENABLE
 	#define RGB_DI_PIN D3
 	#define RGBLED_NUM 74
+	#define DRIVER_LED_TOTAL RGBLED_NUM
 	#define RGBLED_SPLIT {37,37}
-	//#define RGBLIGHT_ANIMATIONS // Very memory intensive (+2604)
-	#define RGBLIGHT_EFFECT_STATIC_GRADIENT //Preferred RGB effect (+262)
-	#define RGBLIGHT_LIMIT_VAL 160 //Power draw may still exceed the USB limitations of 0.6A at max brightness with white colour with this setting.
-	//#define RGBLIGHT_LAYERS //Enable layer light indicators. Not required as updates are done in layer_state_set_user and led_update_user (+588).
+	// #define RGBLIGHT_ANIMATIONS // Very memory intensive (+2604)
+	#define RGBLIGHT_EFFECT_BREATHING //Preferred RGB effect (+262)
+	#define RGBLIGHT_EFFECT_RAINBOW_SWIRL //Preferred RGB effect (+262)
+	#define RGBLIGHT_LIMIT_VAL 180 //Power draw may still exceed the USB limitations of 0.6A at max brightness with white colour with this setting.
+	#define RGBLIGHT_DEFAULT_VAL 100
+	#define RGBLIGHT_DEFAULT_SPD 180
+ 	#define RGBLIGHT_VAL_STEP 8
+	#define RGBLIGHT_LAYERS //Enable layer light indicators. Not required as updates are done in layer_state_set_user and led_update_user (+588).
 	#define RGBLIGHT_SLEEP //Turn off LEDs when computer sleeping (+72)
+	#define RGBLIGHT_LAYERS_RETAIN_VAL
+	#define RGBLIGHT_EFFECT_BREATHE_MAX 140
+	
+
 
 	//RGB LED Conversion macro from physical array to electric array (+146). This results in better looking animated effects.
 	//First section is the LED matrix, second section is the electrical wiring order, and the third section is the desired mapping

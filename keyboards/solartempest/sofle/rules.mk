@@ -13,19 +13,21 @@ SPACE_CADET_ENABLE = no 		# Save space by not using space cadet left/right shift
 LTO_ENABLE = yes				# Save space by link time optimization
 
 RGBLIGHT_ENABLE = yes			# RGB lighting (+3826)
+# RGB_MATRIX_ENABLE = no
+# RGB_MATRIX_DRIVER = WS2812
 ENCODER_ENABLE = yes			# Rotary encoders (+1112)
 EXTRAKEY_ENABLE = yes			# Audio control and System control (+450)
-MOUSEKEY_ENABLE = no			# Mouse keys (+1482). Not required for trackball usage.
-NKRO_ENABLE = no				# 6KRO by default. NKRO works if enabled (+328)
-COMBO_ENABLE = no				# Tap combo chording (+952)
-#VIA							# VIA_ENABLE with the keymap (+2300). Note: VIA is required as non-via layouts were removed to save space.
+# MOUSEKEY_ENABLE = no			# Mouse keys (+1482). Not required for trackball usage.
+# NKRO_ENABLE = no				# 6KRO by default. NKRO works if enabled (+328)
+# COMBO_ENABLE = no				# Tap combo chording (+952)
+VIA_ENABLE = yes				# VIA_ENABLE with the keymap (+2300). Note: VIA is required as non-via layouts were removed to save space.
 
 OLED_ENABLE = yes				# Must be disabled if OLEDs are not installed (+3608-4774 with pet)
 OLED_DRIVER = SSD1306			# Specify OLED driver
-WPM_ENABLE = no					# WPM counter for typing-speed-reactive keyboard pets (+782)
+WPM_ENABLE = yes				# WPM counter for typing-speed-reactive keyboard pets (+782)
 
-POINTING_DEVICE_ENABLE = yes	# Enable Pimoroni Trackball on master (+2304)
-POINTING_DEVICE_DRIVER = pimoroni_trackball
+# POINTING_DEVICE_ENABLE = no	# Enable Pimoroni Trackball on master (+2304)
+# POINTING_DEVICE_DRIVER = pimoroni_trackball
 
-HAPTIC_ENABLE = yes				# Enable Pimoroni Haptic Bzzz LRA (+1192)
-HAPTIC_DRIVER += DRV2605L
+# HAPTIC_ENABLE = no				# Enable Pimoroni Haptic Bzzz LRA (+1192)
+# HAPTIC_DRIVER += DRV2605L

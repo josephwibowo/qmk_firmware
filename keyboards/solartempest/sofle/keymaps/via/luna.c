@@ -220,9 +220,9 @@
 
 	static void print_logo_narrow(void) {
 		oled_set_cursor(0,3);
-		oled_write("SOLAR", false);
+		oled_write("NICE", false);
 		oled_set_cursor(0,4);
-		oled_write("TMPST", false);
+		oled_write("DAY", false);
 	 
 	 	/* wpm counter */
 		oled_set_cursor(0,10);
@@ -249,18 +249,16 @@
 		oled_set_cursor(0,3);
 		switch (get_highest_layer(layer_state)) {
 			case 0:
-			case 2:
-				oled_write("Base ", false);
+				oled_write("Qwert", false);
 				break;
 			case 1:
-				oled_write("Game ", false);
-				break;
-			case 4:
 				oled_write("Raise", false);
 				break;
-			case 3:
-				oled_write("Lower", false);
+			case 2:
+				oled_write("Adjst", false);
 				break;
+			default:
+				oled_write("Undef", false);
 		}
 		
 		/* lock status */
@@ -269,7 +267,7 @@
 		oled_set_cursor(0,7);
 		oled_write("Caps", led_usb_state.caps_lock);
 		oled_set_cursor(0,8);
-		oled_write("Num", !(led_usb_state.num_lock));
+		oled_write("Num", (led_usb_state.num_lock));
 		oled_set_cursor(0,9);
 		oled_write("Scrl", led_usb_state.scroll_lock);
 	 
