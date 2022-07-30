@@ -219,10 +219,10 @@
 	/* KEYBOARD PET END */
 
 	static void print_logo_narrow(void) {
-		oled_set_cursor(0,3);
-		oled_write("NICE", false);
-		oled_set_cursor(0,4);
-		oled_write("DAY", false);
+		static const char PROGMEM raw_logo[] = {
+        0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,192, 32, 64,128,128,128, 64, 32,192,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,224, 28,  3,  0,  4,  0, 16,  8, 16,  0,  4,  0,  3, 28,224,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,126,129,  0,  0,  0,224,  0,192,  0,  0,192,  0,224,  0,  0,129,126, 64, 72, 52,132,120,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  1,  1,  1,  3,  2,  3,  1,  1,  3,  2,  3,  1,  1,  1,  1,  1,  1,  1,  0,  0,  0,  0,  0,
+		};
+		oled_write_raw_P(raw_logo, sizeof(raw_logo));
 	 
 	 	/* wpm counter */
 		oled_set_cursor(0,10);
@@ -246,20 +246,20 @@
 		oled_set_cursor(0,2);
 		oled_write("LAYER", false);
 	 
-		oled_set_cursor(0,3);
-		switch (get_highest_layer(layer_state)) {
-			case 0:
-				oled_write("Qwert", false);
-				break;
-			case 1:
-				oled_write("Raise", false);
-				break;
-			case 2:
-				oled_write("Adjst", false);
-				break;
-			default:
-				oled_write("Undef", false);
-		}
+		// oled_set_cursor(0,3);
+		// switch (get_highest_layer(layer_state)) {
+		// 	case 0:
+		// 		oled_write("Qwert", false);
+		// 		break;
+		// 	case 1:
+		// 		oled_write("Raise", false);
+		// 		break;
+		// 	case 2:
+		// 		oled_write("Adjst", false);
+		// 		break;
+		// 	default:
+		// 		oled_write("Undef", false);
+		// }
 		
 		/* lock status */
 		oled_set_cursor(0,6);
@@ -286,15 +286,14 @@
 		led_usb_state = host_keyboard_led_state();
 		/* KEYBOARD PET VARIABLES END */
 		
-		
-		if (is_keyboard_master()) { //Drashna's OLED timeout off code for animations
-			if (timer_elapsed32(oled_timer) > 30000) {
-				oled_off();
-				return false;
-			} else {
-				oled_on();
-			}
-		}
+		// if (is_keyboard_master()) { //Drashna's OLED timeout off code for animations
+		// 	if (timer_elapsed32(oled_timer) > 30000) {
+		// 		oled_off();
+		// 		return false;
+		// 	} else {
+		// 		oled_on();
+		// 	}
+		// }
 		
 		if (is_keyboard_master()) {
 			print_status_narrow();
